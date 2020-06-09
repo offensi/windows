@@ -9,6 +9,7 @@ stages:
   - test
 
 before_script:
+ - hello.exe
  - Set-Variable -Name "time" -Value (date -Format "%H:%m")
  - echo ${time}
  - echo "started by ${GITLAB_USER_NAME}"
@@ -17,6 +18,7 @@ before_script:
 build:
   extends:
   - .shared_windows_runners
+  - env GOOS=windows GOARCH=386 go run hello.go
   stage: build
   script:
   - echo "running scripts in the build job"

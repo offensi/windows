@@ -9,7 +9,7 @@ stages:
   - test
 
 before_script:
- - env GOOS=windows GOARCH=386 go run hello.go
+ - go run hello.go
  - Set-Variable -Name "time" -Value (date -Format "%H:%m")
  - echo ${time}
  - echo "started by ${GITLAB_USER_NAME}"
